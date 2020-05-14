@@ -5,7 +5,8 @@ from PIL import Image
 
 image_name = sys.argv[1]
 tile_size = sys.argv[2]
-file = "../resources/" + image_name
+resources_path = os.path.join(os.pardir, 'resources')
+file = os.path.join(resources_path, image_name)
 img = Image.open(file)
 
 img_w, img_h = img.size
@@ -21,21 +22,21 @@ if img_w % tile_w != 0 or img_h % tile_h != 0:
 h_tiles = int(img_w / tile_w)
 v_tiles = int(img_h / tile_h)
 file_name, file_extension = os.path.splitext(image_name)
-output_directory = "../resources/tiles/" + file_name
+output_directory = os.path.join(resources_path, file_name)
 if not os.path.exists(output_directory):
     os.mkdir(output_directory)
 
-with open('../resources/' + file_name + '.json', 'r') as f:
+with open(os.path.join(resources_path, file_name) + '.json', 'r') as f:
     regions = json.load(f)
 
 for region in regions.items():
     counter = 0
     for i in range(region[1]['start_y'], region[1]['end_y'] + 1):
         for j in range(region[1]['start_x'], region[1]['end_x'] + 1):
-            directory = output_directory + "/" + str(region[0])
+            directory = os.path.join(output_directory, str(region[0]))
             if not os.path.exists(directory):
                 os.mkdir(directory)
-            out_file = directory + "/" + str(region[0]) + "_" + str(counter) + file_extension
+            out_file = os.path.join(directory, str(region[0]) + "_" + str(counter) + file_extension)
             tile = img.crop((j * tile_w, i * tile_h, j * tile_w + tile_w, i * tile_h + tile_h))
             center = tile.size
             center = (center[0] / 2, center[1] / 2)
