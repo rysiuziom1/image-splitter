@@ -5,6 +5,7 @@ from PIL import Image
 
 image_name = sys.argv[1]
 tile_size = sys.argv[2]
+json_file = sys.argv[3]
 file = "../resources/" + image_name
 img = Image.open(file)
 
@@ -20,9 +21,11 @@ if img_w % tile_w != 0 or img_h % tile_h != 0:
 
 h_tiles = int(img_w / tile_w)
 v_tiles = int(img_h / tile_h)
-output_directory = "../resources/tiles/"
+output_directory = "../resources/tiles/" + os.path.splitext(image_name)[0]
+if not os.path.exists(output_directory):
+    os.mkdir(output_directory)
 
-with open('../resources/regions.json', 'r') as f:
+with open('../resources/' + json_file, 'r') as f:
     regions = json.load(f)
     print(regions)
 
@@ -35,7 +38,9 @@ for region in regions.items():
                 os.mkdir(directory)
             out_file = directory + "/" + str(region[0]) + "_" + str(counter) + '.png'
             tile = img.crop((j * tile_w, i * tile_h, j * tile_w + tile_w, i * tile_h + tile_h))
-            center_pixel_alpha = tile.getpixel((64, 64))[3]
+            center = tile.size
+            center = (center[0] / 2, center[1] / 2)
+            center_pixel_alpha = tile.getpixel(center)[3]
             if center_pixel_alpha != 0:
                 tile.save(out_file, 'PNG')
                 counter += 1
