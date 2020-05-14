@@ -12,11 +12,11 @@ img = Image.open(file)
 img_w, img_h = img.size
 tile_w, tile_h = [int(i) for i in tile_size.split('x')]
 
-print('width:', img_w, 'height:', img_h, sep=' ')
-print('width:', tile_w, 'height:', tile_h, sep=' ')
+print('image width:', img_w, 'image height:', img_h)
+print('tile width:', tile_w, 'tile height:', tile_h)
 
 if img_w % tile_w != 0 or img_h % tile_h != 0:
-    print("Cannot split this image!")
+    print("Cannot split image using current tile size!")
     sys.exit(1)
 
 h_tiles = int(img_w / tile_w)
@@ -27,7 +27,6 @@ if not os.path.exists(output_directory):
 
 with open('../resources/' + json_file, 'r') as f:
     regions = json.load(f)
-    print(regions)
 
 for region in regions.items():
     counter = 0
@@ -44,4 +43,3 @@ for region in regions.items():
             if center_pixel_alpha != 0:
                 tile.save(out_file, 'PNG')
                 counter += 1
-
